@@ -1,355 +1,133 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Guest Check-In</title>
-  <style>
-    :root {
-      --bg-1: #f5f7fb;
-      --bg-2: #e7edf9;
-      --card: #ffffff;
-      --text: #0f172a;
-      --muted: #5b6478;
-      --primary: #0f766e;
-      --primary-2: #0ea5a1;
-      --danger: #c2410c;
-      --success: #166534;
-      --ring: rgba(14, 165, 161, 0.25);
-      --shadow: 0 20px 45px rgba(16, 24, 40, 0.12);
-      --radius: 22px;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: "Space Grotesk", "Segoe UI", -apple-system, sans-serif;
-      color: var(--text);
-      min-height: 100%;
-      background:
-        radial-gradient(1200px 500px at -15% -15%, #d2f4ef 0%, transparent 55%),
-        radial-gradient(900px 500px at 120% 0%, #cbe4ff 0%, transparent 55%),
-        linear-gradient(165deg, var(--bg-1) 0%, var(--bg-2) 100%);
-    }
-
-    .wrap {
-      min-height: 100svh;
-      display: grid;
-      place-items: center;
-      padding: 20px 16px 28px;
-    }
-
-    .card {
-      width: 100%;
-      max-width: 460px;
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 22px 16px 18px;
-      border: 1px solid rgba(15, 23, 42, 0.06);
-    }
-
-    .kicker {
-      margin: 0;
-      font-size: 13px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
-      font-weight: 700;
-    }
-
-    h1 {
-      margin: 8px 0 6px;
-      font-size: 28px;
-      line-height: 1.1;
-    }
-
-    .hint {
-      margin: 0 0 18px;
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.4;
-    }
-
-    .field {
-      margin-bottom: 14px;
-    }
-
-    label {
-      display: block;
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    input[type="text"] {
-      width: 100%;
-      border: 1px solid #d8deea;
-      border-radius: 14px;
-      padding: 14px;
-      font-size: 16px;
-      outline: none;
-      transition: box-shadow 0.18s ease, border-color 0.18s ease;
-      background: #fff;
-    }
-
-    input[type="text"]:focus {
-      border-color: var(--primary-2);
-      box-shadow: 0 0 0 5px var(--ring);
-    }
-
-    .scan-btn,
-    .submit-btn {
-      width: 100%;
-      border: none;
-      border-radius: 16px;
-      padding: 16px 18px;
-      font-size: 18px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.08s ease, opacity 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .scan-btn:active,
-    .submit-btn:active {
-      transform: translateY(1px);
-    }
-
-    .scan-btn {
-      background: linear-gradient(135deg, var(--primary), var(--primary-2));
-      color: #fff;
-      box-shadow: 0 10px 24px rgba(14, 165, 161, 0.34);
-      margin-bottom: 12px;
-    }
-
-    .submit-btn {
-      background: #0f172a;
-      color: #fff;
-      margin-top: 12px;
-    }
-
-    .scan-btn[disabled],
-    .submit-btn[disabled] {
-      opacity: 0.45;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-
-    .chip-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin: 10px 0 4px;
-    }
-
-    .chip {
-      font-size: 12px;
-      border-radius: 999px;
-      padding: 6px 10px;
-      background: #eef2ff;
-      color: #334155;
-      border: 1px solid #dbe4ff;
-    }
-
-    .status {
-      margin-top: 12px;
-      min-height: 22px;
-      font-size: 14px;
-      font-weight: 600;
-      color: #334155;
-    }
-
-    .status.error {
-      color: var(--danger);
-    }
-
-    .status.ok {
-      color: var(--success);
-    }
-
-    .preview {
-      margin-top: 12px;
-      border-radius: 14px;
-      width: 100%;
-      display: none;
-      border: 1px solid #e5e7eb;
-      object-fit: cover;
-      max-height: 230px;
-    }
-
-    .done {
-      display: none;
-      margin-top: 16px;
-      border-radius: 14px;
-      padding: 14px;
-      background: #ecfdf3;
-      border: 1px solid #bbf7d0;
-      color: #166534;
-      font-weight: 700;
-      text-align: center;
-    }
-  </style>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vikentis One | Mobile Check-in</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root { --teal: #008080; --dark: #1a1a1a; }
+        body { font-family: -apple-system, sans-serif; background: var(--dark); color: white; text-align: center; margin: 0; padding: 20px; }
+        .card { background: #2a2a2a; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .toggle-container { display: flex; background: #444; border-radius: 10px; margin: 20px 0; padding: 5px; }
+        .toggle-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; color: white; background: transparent; cursor: pointer; }
+        .toggle-btn.active { background: var(--teal); font-weight: bold; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #444; background: #333; color: white; box-sizing: border-box; }
+        .camera-box { border: 2px dashed #666; padding: 20px; border-radius: 10px; margin: 10px 0; position: relative; }
+        .camera-box.ready { border-color: var(--teal); background: rgba(0,128,128,0.1); }
+        .btn-upload { background: var(--teal); color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-size: 16px; font-weight: bold; margin-top: 20px; }
+        .btn-upload:disabled { background: #444; color: #888; }
+        .hidden { display: none; }
+        img.preview { width: 100%; border-radius: 8px; margin-top: 10px; }
+    </style>
 </head>
 <body>
-  <main class="wrap">
-    <section class="card">
-      <p class="kicker">Mobile Check-In</p>
-      <h1>Guest Identity Upload</h1>
-      <p class="hint">Capture ID, upload, and stage it for drag-and-drop room assignment.</p>
+    <div class="card">
+        <h2 style="color: var(--teal)">VIKENTIS ONE</h2>
+        <p>Guest Self Check-in</p>
 
-      <div class="chip-row">
-        <span class="chip" id="propChip">Property: --</span>
-        <span class="chip" id="grpChip">Group: --</span>
-      </div>
+        <input type="text" id="guestName" placeholder="Full Name (as per document)">
 
-      <div class="field">
-        <label for="guestName">Guest Name</label>
-        <input id="guestName" type="text" placeholder="e.g., Nino Beridze" autocomplete="name" />
-      </div>
+        <div class="toggle-container">
+            <button id="btnPassport" class="toggle-btn active" onclick="setDocType('passport')">Passport</button>
+            <button id="btnID" class="toggle-btn" onclick="setDocType('id_card')">ID Card</button>
+        </div>
 
-      <input id="fileInput" type="file" accept="image/*" capture="environment" hidden />
-      <button class="scan-btn" id="scanBtn" type="button">📷 Scan Passport / ID</button>
-      <img id="preview" class="preview" alt="Captured ID preview" />
+        <div class="camera-box" id="boxFront">
+            <span id="labelFront">Scan Passport Page</span>
+            <input type="file" id="fileFront" accept="image/*" capture="environment" onchange="preview(this, 'viewFront', 'boxFront')">
+            <img id="viewFront" class="preview hidden">
+        </div>
 
-      <button class="submit-btn" id="submitBtn" type="button" disabled>Upload & Submit</button>
+        <div class="camera-box hidden" id="boxBack">
+            <span>Scan Back (MRZ Side)</span>
+            <input type="file" id="fileBack" accept="image/*" capture="environment" onchange="preview(this, 'viewBack', 'boxBack')">
+            <img id="viewBack" class="preview hidden">
+        </div>
 
-      <p id="status" class="status"></p>
-      <div id="done" class="done">Thank you. Your identity scan was submitted.</div>
-    </section>
-  </main>
+        <button id="submitBtn" class="btn-upload" onclick="upload()" disabled>Upload & Submit</button>
+        <p id="status"></p>
+    </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    (function () {
-      const params = new URLSearchParams(window.location.search);
+    <script>
+        const SB_URL = 'https://tokfvejinrklyysffont.supabase.co';
+        const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRva2Z2ZWppbnJrbHl5c2Zmb250Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzMjkwNzEsImV4cCI6MjA4NjkwNTA3MX0.iIe4jzOTd2mw0n0GCEnFSeySu0ct76g4Mwxuq1WwWxE';
+        const supabase = supabase.createClient(SB_URL, SB_KEY);
 
-      const SUPABASE_URL = 'https://tokfvejinrklyysffont.supabase.co';
-      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRva2Z2ZWppbnJrbHl5c2Zmb250Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzMjkwNzEsImV4cCI6MjA4NjkwNTA3MX0.iIe4jzOTd2mw0n0GCEnFSeySu0ct76g4Mwxuq1WwWxE';
-      const BUCKET = 'passport-uploads';
+        let docType = 'passport';
 
-      const propertyId = Number(params.get('prop')) || 1;
-      const groupId = Number(params.get('grp')) || 1;
-
-      const guestNameInput = document.getElementById('guestName');
-      const scanBtn = document.getElementById('scanBtn');
-      const submitBtn = document.getElementById('submitBtn');
-      const statusEl = document.getElementById('status');
-      const doneEl = document.getElementById('done');
-      const fileInput = document.getElementById('fileInput');
-      const preview = document.getElementById('preview');
-      const propChip = document.getElementById('propChip');
-      const grpChip = document.getElementById('grpChip');
-
-      propChip.textContent = 'Property: ' + (propertyId || '--');
-      grpChip.textContent = 'Group: ' + (groupId || '--');
-
-      let selectedFile = null;
-
-      function setStatus(message, kind) {
-        statusEl.textContent = message || '';
-        statusEl.classList.remove('error', 'ok');
-        if (kind) statusEl.classList.add(kind);
-      }
-
-      function requireConfig() {
-        // We bypass the check because we are in development
-        console.log("Config active for Property:", propertyId);
-        return true; 
-      }
-
-      scanBtn.addEventListener('click', function () {
-        if (!requireConfig()) return;
-        doneEl.style.display = 'none';
-        fileInput.click();
-      });
-
-      fileInput.addEventListener('change', function (event) {
-        const file = event.target.files && event.target.files[0];
-        if (!file) return;
-        selectedFile = file;
-        submitBtn.disabled = false;
-
-        const tempUrl = URL.createObjectURL(file);
-        preview.src = tempUrl;
-        preview.style.display = 'block';
-        setStatus('Photo captured. Ready to upload.', 'ok');
-      });
-
-      submitBtn.addEventListener('click', async function () {
-        if (!requireConfig()) return;
-
-        const guestName = guestNameInput.value.trim();
-        if (!guestName) {
-          setStatus('Please enter guest name.', 'error');
-          return;
-        }
-        if (!selectedFile) {
-          setStatus('Please scan passport/ID first.', 'error');
-          return;
+        function setDocType(type) {
+            docType = type;
+            document.getElementById('btnPassport').classList.toggle('active', type === 'passport');
+            document.getElementById('btnID').classList.toggle('active', type === 'id_card');
+            document.getElementById('boxBack').classList.toggle('hidden', type === 'passport');
+            document.getElementById('labelFront').innerText = type === 'passport' ? 'Scan Passport Page' : 'Scan Front (Photo Side)';
+            checkReady();
         }
 
-        submitBtn.disabled = true;
-        scanBtn.disabled = true;
-        setStatus('Uploading image...', '');
-
-        try {
-          const { createClient } = window.supabase;
-          const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-          const ext = (selectedFile.name.split('.').pop() || 'jpg').toLowerCase();
-          const safeGuest = guestName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'guest';
-          const fileName = 'prop-' + propertyId + '-grp-' + groupId + '-' + Date.now() + '-' + safeGuest + '.' + ext;
-
-          const uploadResult = await supabase.storage
-            .from(BUCKET)
-            .upload(fileName, selectedFile, { upsert: false, contentType: selectedFile.type || 'image/jpeg' });
-
-          if (uploadResult.error) {
-            throw new Error('Upload failed: ' + uploadResult.error.message);
-          }
-
-          setStatus('Saving staging record...', '');
-
-          const insertResult = await supabase
-            .from('identity_staging_area')
-            .insert([
-              {
-                property_id: propertyId,
-                group_id: groupId,
-                image_path: fileName,
-                guest_name: guestName,
-                status: 'PENDING'
-              }
-            ]);
-
-          if (insertResult.error) {
-            throw new Error('DB insert failed: ' + insertResult.error.message);
-          }
-
-          doneEl.style.display = 'block';
-          setStatus('Uploaded and staged successfully.', 'ok');
-          guestNameInput.value = '';
-          fileInput.value = '';
-          selectedFile = null;
-          submitBtn.disabled = true;
-        } catch (err) {
-          setStatus(err && err.message ? err.message : 'Something went wrong.', 'error');
-          submitBtn.disabled = false;
-        } finally {
-          scanBtn.disabled = false;
+        function preview(input, imgId, boxId) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const img = document.getElementById(imgId);
+                    img.src = e.target.result;
+                    img.classList.remove('hidden');
+                    document.getElementById(boxId).classList.add('ready');
+                    checkReady();
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
         }
-      });
 
-      requireConfig();
-    })();
-  </script>
+        function checkReady() {
+            const name = document.getElementById('guestName').value;
+            const front = document.getElementById('fileFront').files.length > 0;
+            const back = document.getElementById('fileBack').files.length > 0;
+            
+            const isReady = docType === 'passport' ? (name && front) : (name && front && back);
+            document.getElementById('submitBtn').disabled = !isReady;
+        }
+
+        async function uploadFile(file, folder) {
+            const ext = file.name.split('.').pop();
+            const path = `${folder}/${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
+            const { data, error } = await supabase.storage.from('passport-uploads').upload(path, file);
+            if (error) throw error;
+            return path;
+        }
+
+        async function upload() {
+            const status = document.getElementById('status');
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            status.innerText = "Processing... Please wait.";
+
+            try {
+                const frontFile = document.getElementById('fileFront').files[0];
+                const frontPath = await uploadFile(frontFile, 'front');
+                
+                let backPath = null;
+                if (docType === 'id_card') {
+                    const backFile = document.getElementById('fileBack').files[0];
+                    backPath = await uploadFile(backFile, 'back');
+                }
+
+                const { error } = await supabase.from('identity_staging_area').insert([{
+                    guest_name: document.getElementById('guestName').value,
+                    image_path_front: frontPath,
+                    image_path_back: backPath,
+                    doc_type: docType
+                }]);
+
+                if (error) throw error;
+                document.body.innerHTML = "<div class='card'><h1>✅</h1><h2>Thank You!</h2><p>Your document has been sent to the reception desk.</p></div>";
+            } catch (err) {
+                status.innerText = "Error: " + err.message;
+                btn.disabled = false;
+            }
+        }
+
+        document.getElementById('guestName').addEventListener('input', checkReady);
+    </script>
 </body>
 </html>
