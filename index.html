@@ -8,129 +8,115 @@
     <style>
         :root { --teal: #008080; --dark: #1a1a1a; }
         body { font-family: -apple-system, sans-serif; background: var(--dark); color: white; text-align: center; margin: 0; padding: 20px; }
-        .card { background: #2a2a2a; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .card { background: #2a2a2a; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); max-width: 500px; margin: auto; }
         .toggle-container { display: flex; background: #444; border-radius: 10px; margin: 20px 0; padding: 5px; }
-        .toggle-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; color: white; background: transparent; cursor: pointer; }
-        .toggle-btn.active { background: var(--teal); font-weight: bold; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #444; background: #333; color: white; box-sizing: border-box; }
-        .camera-box { border: 2px dashed #666; padding: 20px; border-radius: 10px; margin: 10px 0; position: relative; }
+        .toggle-btn { flex: 1; padding: 12px; border-radius: 8px; border: none; color: white; background: transparent; cursor: pointer; transition: 0.3s; }
+        .toggle-btn.active { background: var(--teal) !important; font-weight: bold; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #444; background: #333; color: white; box-sizing: border-box; font-size: 16px; }
+        .camera-box { border: 2px dashed #666; padding: 20px; border-radius: 10px; margin: 10px 0; position: relative; cursor: pointer; }
         .camera-box.ready { border-color: var(--teal); background: rgba(0,128,128,0.1); }
-        .btn-upload { background: var(--teal); color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-size: 16px; font-weight: bold; margin-top: 20px; }
-        .btn-upload:disabled { background: #444; color: #888; }
-        .hidden {display: none !important;}
-        img.preview { width: 100%; border-radius: 8px; margin-top: 10px; }
+        .btn-upload { background: var(--teal); color: white; border: none; padding: 18px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: bold; margin-top: 20px; cursor: pointer; }
+        .btn-upload:disabled { background: #444; color: #888; cursor: not-allowed; }
+        .hidden { display: none !important; }
+        img.preview { width: 100%; border-radius: 8px; margin-top: 10px; border: 1px solid var(--teal); }
+        label { display: block; margin-bottom: 5px; font-size: 14px; color: #aaa; text-align: left; }
     </style>
 </head>
 <body>
     <div class="card">
-        <h2 style="color: var(--teal)">VIKENTIS ONE</h2>
-        <p>Guest Self Check-in</p>
+        <h2 style="color: var(--teal); margin-bottom: 5px;">VIKENTIS ONE</h2>
+        <p style="margin-top: 0; color: #888;">Secure Mobile Check-in</p>
 
-        <input type="text" id="guestName" placeholder="Full Name (as per document)">
+        <label for="guestName">Guest Information</label>
+        <input type="text" id="guestName" placeholder="Full Name (as per document)" autocomplete="off">
 
+        <label>Select Document Type</label>
         <div class="toggle-container">
-    <button type="button" id="btnPassport" class="toggle-btn active" onclick="setDocType('passport')">Passport</button>
-    <button type="button" id="btnID" class="toggle-btn" onclick="setDocType('id_card')">ID Card</button>
-</div>
+            <button type="button" id="btnPassport" class="toggle-btn active" onclick="setDocType('passport')">Passport</button>
+            <button type="button" id="btnID" class="toggle-btn" onclick="setDocType('id_card')">ID Card</button>
+        </div>
 
-        <div class="camera-box" id="boxFront">
+        <div class="camera-box" id="boxFront" onclick="document.getElementById('fileFront').click()">
             <span id="labelFront">Scan Passport Page</span>
-            <input type="file" id="fileFront" accept="image/*" capture="environment" onchange="preview(this, 'viewFront', 'boxFront')">
+            <input type="file" id="fileFront" accept="image/*" capture="environment" class="hidden" onchange="preview(this, 'viewFront', 'boxFront')">
             <img id="viewFront" class="preview hidden">
         </div>
 
-        <div class="camera-box hidden" id="boxBack">
+        <div class="camera-box hidden" id="boxBack" onclick="document.getElementById('fileBack').click()">
             <span>Scan Back (MRZ Side)</span>
-            <input type="file" id="fileBack" accept="image/*" capture="environment" onchange="preview(this, 'viewBack', 'boxBack')">
+            <input type="file" id="fileBack" accept="image/*" capture="environment" class="hidden" onchange="preview(this, 'viewBack', 'boxBack')">
             <img id="viewBack" class="preview hidden">
         </div>
 
         <button id="submitBtn" class="btn-upload" onclick="upload()" disabled>Upload & Submit</button>
-        <p id="status"></p>
+        <p id="status" style="margin-top: 15px; font-size: 14px;"></p>
     </div>
 
     <script>
         const SB_URL = 'https://tokfvejinrklyysffont.supabase.co';
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRva2Z2ZWppbnJrbHl5c2Zmb250Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzMjkwNzEsImV4cCI6MjA4NjkwNTA3MX0.iIe4jzOTd2mw0n0GCEnFSeySu0ct76g4Mwxuq1WwWxE';
-        const supabase = supabase.createClient(SB_URL, SB_KEY);
+        const _supabase = supabase.createClient(SB_URL, SB_KEY);
 
         let docType = 'passport';
 
         function setDocType(type) {
-    console.log("Setting document mode to:", type); // Helpful for debugging
-    docType = type;
+            docType = type;
+            console.log("Mode switched to:", type);
 
-    // 1. Get all the elements we need to change
-    const btnPassport = document.getElementById('btnPassport');
-    const btnID = document.getElementById('btnID');
-    const boxBack = document.getElementById('boxBack');
-    const labelFront = document.getElementById('labelFront');
+            // Update UI Buttons
+            document.getElementById('btnPassport').classList.toggle('active', type === 'passport');
+            document.getElementById('btnID').classList.toggle('active', type === 'id_card');
 
-    if (type === 'id_card') {
-        // --- ID CARD MODE ---
-        btnID.classList.add('active');
-        btnPassport.classList.remove('active');
-        
-        boxBack.classList.remove('hidden'); // Force show the second box
-        labelFront.innerText = 'Scan Front (Photo Side)';
-    } else {
-        // --- PASSPORT MODE ---
-        btnPassport.classList.add('active');
-        btnID.classList.remove('active');
-        
-        boxBack.classList.add('hidden'); // Force hide the second box
-        labelFront.innerText = 'Scan Passport Page';
-    }
+            // Show/Hide Back Box
+            const boxBack = document.getElementById('boxBack');
+            const labelFront = document.getElementById('labelFront');
 
-    // Run validation to update the Submit button
-    checkReady();
-}
-
-function preview(input, imgId, boxId) {
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        
-        reader.onload = function(e) {
-            const img = document.getElementById(imgId);
-            const box = document.getElementById(boxId);
-            
-            // Set the image source to the file the user just took
-            img.src = e.target.result;
-            
-            // Show the image and mark the box as 'ready' (turns it teal)
-            img.classList.remove('hidden');
-            box.classList.add('ready');
-            
-            console.log("Image captured for:", boxId);
+            if (type === 'id_card') {
+                boxBack.classList.remove('hidden');
+                labelFront.innerText = 'Scan Front (Photo Side)';
+            } else {
+                boxBack.classList.add('hidden');
+                labelFront.innerText = 'Scan Passport Page';
+            }
             checkReady();
-        };
-        
-        reader.readAsDataURL(input.files[0]);
-    }
-}
+        }
+
+        function preview(input, imgId, boxId) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const img = document.getElementById(imgId);
+                    img.src = e.target.result;
+                    img.classList.remove('hidden');
+                    document.getElementById(boxId).classList.add('ready');
+                    checkReady();
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
 
         function checkReady() {
-            const name = document.getElementById('guestName').value;
+            const name = document.getElementById('guestName').value.trim();
             const front = document.getElementById('fileFront').files.length > 0;
             const back = document.getElementById('fileBack').files.length > 0;
             
-            const isReady = docType === 'passport' ? (name && front) : (name && front && back);
+            const isReady = (docType === 'passport') ? (name && front) : (name && front && back);
             document.getElementById('submitBtn').disabled = !isReady;
         }
 
-        async function uploadFile(file, folder) {
-            const ext = file.name.split('.').pop();
-            const path = `${folder}/${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
-            const { data, error } = await supabase.storage.from('passport-uploads').upload(path, file);
+        async function uploadFile(file, side) {
+            const ext = file.name.split('.').pop() || 'jpg';
+            const fileName = `${side}_${Date.now()}.${ext}`;
+            const { data, error } = await _supabase.storage.from('passport-uploads').upload(fileName, file);
             if (error) throw error;
-            return path;
+            return fileName;
         }
 
         async function upload() {
             const status = document.getElementById('status');
             const btn = document.getElementById('submitBtn');
             btn.disabled = true;
-            status.innerText = "Processing... Please wait.";
+            status.innerText = "⏳ Uploading to Vikentis Cloud...";
 
             try {
                 const frontFile = document.getElementById('fileFront').files[0];
@@ -142,7 +128,7 @@ function preview(input, imgId, boxId) {
                     backPath = await uploadFile(backFile, 'back');
                 }
 
-                const { error } = await supabase.from('identity_staging_area').insert([{
+                const { error } = await _supabase.from('identity_staging_area').insert([{
                     guest_name: document.getElementById('guestName').value,
                     image_path_front: frontPath,
                     image_path_back: backPath,
@@ -150,9 +136,17 @@ function preview(input, imgId, boxId) {
                 }]);
 
                 if (error) throw error;
-                document.body.innerHTML = "<div class='card'><h1>✅</h1><h2>Thank You!</h2><p>Your document has been sent to the reception desk.</p></div>";
+                
+                document.body.innerHTML = `
+                    <div class="card">
+                        <h1 style="font-size: 50px; margin-bottom: 10px;">✅</h1>
+                        <h2 style="color: var(--teal)">Success!</h2>
+                        <p>Thank you, ${document.getElementById('guestName').value}.<br>Check-in data sent to reception.</p>
+                        <button class="btn-upload" onclick="location.reload()">New Scan</button>
+                    </div>`;
             } catch (err) {
-                status.innerText = "Error: " + err.message;
+                console.error(err);
+                status.innerText = "❌ Error: " + (err.message || "Upload failed");
                 btn.disabled = false;
             }
         }
