@@ -17,7 +17,7 @@
         .camera-box.ready { border-color: var(--teal); background: rgba(0,128,128,0.1); }
         .btn-upload { background: var(--teal); color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-size: 16px; font-weight: bold; margin-top: 20px; }
         .btn-upload:disabled { background: #444; color: #888; }
-        .hidden { display: none; }
+        .hidden {display: none !important;}
         img.preview { width: 100%; border-radius: 8px; margin-top: 10px; }
     </style>
 </head>
@@ -29,9 +29,9 @@
         <input type="text" id="guestName" placeholder="Full Name (as per document)">
 
         <div class="toggle-container">
-            <button id="btnPassport" class="toggle-btn active" onclick="setDocType('passport')">Passport</button>
-            <button id="btnID" class="toggle-btn" onclick="setDocType('id_card')">ID Card</button>
-        </div>
+    <button type="button" id="btnPassport" class="toggle-btn active" onclick="setDocType('passport')">Passport</button>
+    <button type="button" id="btnID" class="toggle-btn" onclick="setDocType('id_card')">ID Card</button>
+</div>
 
         <div class="camera-box" id="boxFront">
             <span id="labelFront">Scan Passport Page</span>
@@ -57,27 +57,57 @@
         let docType = 'passport';
 
         function setDocType(type) {
-            docType = type;
-            document.getElementById('btnPassport').classList.toggle('active', type === 'passport');
-            document.getElementById('btnID').classList.toggle('active', type === 'id_card');
-            document.getElementById('boxBack').classList.toggle('hidden', type === 'passport');
-            document.getElementById('labelFront').innerText = type === 'passport' ? 'Scan Passport Page' : 'Scan Front (Photo Side)';
-            checkReady();
-        }
+    console.log("Setting document mode to:", type); // Helpful for debugging
+    docType = type;
 
-        function preview(input, imgId, boxId) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    const img = document.getElementById(imgId);
-                    img.src = e.target.result;
-                    img.classList.remove('hidden');
-                    document.getElementById(boxId).classList.add('ready');
-                    checkReady();
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
+    // 1. Get all the elements we need to change
+    const btnPassport = document.getElementById('btnPassport');
+    const btnID = document.getElementById('btnID');
+    const boxBack = document.getElementById('boxBack');
+    const labelFront = document.getElementById('labelFront');
+
+    if (type === 'id_card') {
+        // --- ID CARD MODE ---
+        btnID.classList.add('active');
+        btnPassport.classList.remove('active');
+        
+        boxBack.classList.remove('hidden'); // Force show the second box
+        labelFront.innerText = 'Scan Front (Photo Side)';
+    } else {
+        // --- PASSPORT MODE ---
+        btnPassport.classList.add('active');
+        btnID.classList.remove('active');
+        
+        boxBack.classList.add('hidden'); // Force hide the second box
+        labelFront.innerText = 'Scan Passport Page';
+    }
+
+    // Run validation to update the Submit button
+    checkReady();
+}
+
+function preview(input, imgId, boxId) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            const img = document.getElementById(imgId);
+            const box = document.getElementById(boxId);
+            
+            // Set the image source to the file the user just took
+            img.src = e.target.result;
+            
+            // Show the image and mark the box as 'ready' (turns it teal)
+            img.classList.remove('hidden');
+            box.classList.add('ready');
+            
+            console.log("Image captured for:", boxId);
+            checkReady();
+        };
+        
+        reader.readAsDataURL(input.files[0]);
+    }
+}
 
         function checkReady() {
             const name = document.getElementById('guestName').value;
